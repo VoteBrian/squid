@@ -11,7 +11,7 @@ public class LockTarget : MonoBehaviour {
     private GameObject[] clone;
     private GameObject player;
 
-    private int max_num_targets = 3;
+    private int max_num_targets = 5;
     private GameObject[] target_handles;
     private int curr_target = 0;
 
@@ -53,6 +53,7 @@ public class LockTarget : MonoBehaviour {
                         target_handles[curr_target] = Instantiate (target,
                                                                    enemy[curr_target].transform.position - offset,
                                                                    Quaternion.identity) as GameObject;
+                        target_handles[curr_target].GetComponent<TargetController>().SetTarget(enemy[curr_target]);
 
                         curr_target++;
                     }
