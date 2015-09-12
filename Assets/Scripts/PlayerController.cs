@@ -26,4 +26,21 @@ public class PlayerController : MonoBehaviour {
             }
         }
     }
+
+    void OnMouseDrag() {
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.Log("drag");
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
+            if (hit.transform.CompareTag("Enemy")) {
+                Debug.Log ("Hit");
+                // if the user clicked on an enemy, create instance of shot
+                clone = Instantiate (shot, transform.position,
+                    Quaternion.LookRotation(hit.transform.position - transform.position)) as GameObject;
+
+                // also, tell the shot what object it needs to track
+                clone.GetComponent<ShotController>().SetTarget(hit.transform.gameObject);
+            }
+        }
+    }
 }
