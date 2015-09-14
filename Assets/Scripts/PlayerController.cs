@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
     private GameObject clone;
 
     void Update () {
+        /*
         // Check for user click
         if (Input.GetButtonDown ("Fire1")) {
             // where did the user click
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }
+        */
     }
 
     void OnMouseDrag() {

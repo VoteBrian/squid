@@ -4,18 +4,20 @@ using System.Collections;
 public class LockTarget : MonoBehaviour {
     public GameObject shot;
     public GameObject target;
+    public GameObject shotStraight;
 
     private Ray ray;
     private RaycastHit hit;
     private GameObject[] enemy;
     private GameObject[] clone;
+    private GameObject straight_clone;
     private GameObject player;
 
     private int max_num_targets = 5;
     private GameObject[] target_handles;
     private int curr_target = 0;
 
-    private bool ignore = false;
+    private bool straight_shot = false;
 
     private Vector3 offset;
 
@@ -31,10 +33,11 @@ public class LockTarget : MonoBehaviour {
 
     void OnMouseDown() {
         curr_target = 0;
+        straight_shot = true;
     }
 
     void OnMouseDrag() {
-        ignore = false;
+        straight_shot = false;
 
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -44,12 +47,13 @@ public class LockTarget : MonoBehaviour {
                     // make sure new target isn't already marked
                     for (int i = 0; i < curr_target; i++) {
                         if (hit.transform.gameObject == enemy[i]) {
-                            ignore = true;
                         }
                     }
 
-                    if (!ignore) {
+                    if ( !(hit.transform.gameObject.GetComponent<EnemiesCommon>().IsSelected() ) ) {
                         enemy[curr_target] = hit.transform.gameObject;
+                        enemy[curr_target].GetComponent<EnemiesCommon>().SetSelected();
+
                         target_handles[curr_target] = Instantiate (target,
                                                                    enemy[curr_target].transform.position - offset,
                                                                    Quaternion.identity) as GameObject;
@@ -63,7 +67,21 @@ public class LockTarget : MonoBehaviour {
     }
 
     void OnMouseUp() {
+        if (straight_shot) {
+            ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+            Physics.Raycast (ray, out hit, Mathf.Infinity);
+
+            straight_clone = Instantiate (shotStraight,
+                                          player.transform.position,
+                                          Quaternion.identity) as GameObject;
+
+            straight_clone.GetComponent<Rigidbody>().velocity = new Vector3 (hit.point.x - player.transform.position.x,
+                                                             hit.point.y - player.transform.position.y,
+                                                             hit.point.z - player.transform.position.z);
+        }
+
         if (curr_target > 0) {
+            // Fire shots and remove targets
             for (int i = 0; i < curr_target; i++) {
                 // if the user clicked on an enemy, create instance of shot
                 clone[i] = Instantiate (shot,
@@ -73,7 +91,7 @@ public class LockTarget : MonoBehaviour {
                 // also, tell the shot what object it needs to track
                 clone[i].GetComponent<ShotController>().SetTarget(enemy[i]);
 
-                Destroy(target_handles[i]);
+                target_handles[i].GetComponent<TargetController>().SelfDestruct();
             }
         }
     }

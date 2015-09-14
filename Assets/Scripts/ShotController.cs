@@ -45,6 +45,9 @@ public class ShotController : MonoBehaviour {
             // calculate progress towards duration
             progress = (Time.time - start_time) / duration;
             if (progress > 1) {
+                // Tell enemy to destory itself
+                target.GetComponent<EnemiesCommon>().SelfDestruct();
+
                 Destroy(gameObject);
             }
 

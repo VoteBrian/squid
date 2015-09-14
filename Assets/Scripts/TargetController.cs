@@ -20,4 +20,8 @@ public class TargetController : MonoBehaviour {
 
         transform.Rotate (new Vector3 (0, 0, Random.Range(40, 100)) * Time.deltaTime);
 	}
+
+    public void SelfDestruct() {
+        Destroy (gameObject);
+    }
 }
